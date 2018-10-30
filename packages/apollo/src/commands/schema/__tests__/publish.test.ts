@@ -96,7 +96,7 @@ describe("successful uploads", () => {
     .nock("http://localhost:4000", localSuccess)
     .nock(ENGINE_URI, engineSuccess())
     .stdout()
-    .command(["schema:publish", `--key=${ENGINE_API_KEY}`])
+    .command(["schema:publish", `--engineKey=${ENGINE_API_KEY}`])
     .it("allows a custom api key", () => {
       expect(uiLog).toContain("12345");
     });

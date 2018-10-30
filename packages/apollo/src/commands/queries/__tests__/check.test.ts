@@ -154,7 +154,7 @@ describe("successful checks", () => {
     .do(() => vol.fromJSON(files))
     .nock(ENGINE_URI, engineSuccess())
     .stdout()
-    .command(["queries:check", `--key=${ENGINE_API_KEY}`])
+    .command(["queries:check", `--engineKey=${ENGINE_API_KEY}`])
     .exit(1)
     .it("allows custom api key", () => {
       expect(stdout).toContain("FAILURE");

@@ -1,7 +1,7 @@
 import { flags } from "@oclif/command";
 
 export const engineFlags = {
-  key: flags.string({
+  engineKey: flags.string({
     description: "The API key for the Apollo Engine service",
     default: () => process.env.ENGINE_API_KEY
   }),

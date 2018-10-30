@@ -115,7 +115,7 @@ describe("successful checks", () => {
     .nock("http://localhost:4000", localSuccess)
     .nock(ENGINE_URI, engineSuccess())
     .stdout()
-    .command(["schema:check", `--key=${ENGINE_API_KEY}`])
+    .command(["schema:check", `--engineKey=${ENGINE_API_KEY}`])
     .exit(1)
     .it("allows custom api key", () => {
       expect(stdout).toContain("FAILURE");

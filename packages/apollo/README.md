@@ -77,7 +77,7 @@ OPTIONS
   --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
                                              "output" directory. Set "globalTypesFile" to specify a different path.
 
-  --key=key                                  The API key for the Apollo Engine service
+  --engineKey=engineKey                      The API key for the Apollo Engine service
 
   --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
 
@@ -143,14 +143,14 @@ USAGE
   $ apollo queries:check
 
 OPTIONS
-  -h, --help         Show command help
-  --config=config    Path to your Apollo config file
-  --json             Output result as JSON
-  --key=key          The API key for the Apollo Engine service
-  --queries=queries  Path to your GraphQL queries, can include search tokens like **
+  -h, --help            Show command help
+  --config=config       Path to your Apollo config file
+  --json                Output result as JSON
+  --engineKey=engineKey The API key for the Apollo Engine service
+  --queries=queries     Path to your GraphQL queries, can include search tokens like **
 
-  --tagName=tagName  [default: gql] Name of the template literal tag used to identify template literals containing
-                     GraphQL queries in Javascript/Typescript code
+  --tagName=tagName     [default: gql] Name of the template literal tag used to identify template literals containing
+                        GraphQL queries in Javascript/Typescript code
 ```
 
 _See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/queries/check.ts)_
@@ -167,13 +167,13 @@ ARGUMENTS
   OUTPUT  [default: manifest.json] Path to write the extracted queries to
 
 OPTIONS
-  -h, --help         Show command help
-  --config=config    Path to your Apollo config file
-  --key=key          The API key for the Apollo Engine service
-  --queries=queries  Path to your GraphQL queries, can include search tokens like **
+  -h, --help            Show command help
+  --config=config       Path to your Apollo config file
+  --engineKey=engineKey The API key for the Apollo Engine service
+  --queries=queries     Path to your GraphQL queries, can include search tokens like **
 
-  --tagName=tagName  [default: gql] Name of the template literal tag used to identify template literals containing
-                     GraphQL queries in Javascript/Typescript code
+  --tagName=tagName     [default: gql] Name of the template literal tag used to identify template literals containing
+                        GraphQL queries in Javascript/Typescript code
 ```
 
 _See code: [src/commands/queries/extract.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/queries/extract.ts)_
@@ -187,12 +187,12 @@ USAGE
   $ apollo schema:check
 
 OPTIONS
-  -h, --help           Show command help
-  --config=config      Path to your Apollo config file
-  --endpoint=endpoint  The URL of the server to fetch the schema from
-  --header=header      Additional headers to send to server for introspectionQuery
-  --json               Output result as JSON
-  --key=key            The API key for the Apollo Engine service
+  -h, --help            Show command help
+  --config=config       Path to your Apollo config file
+  --endpoint=endpoint   The URL of the server to fetch the schema from
+  --header=header       Additional headers to send to server for introspectionQuery
+  --json                Output result as JSON
+  --engineKey=engineKey The API key for the Apollo Engine service
 ```
 
 _See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/schema/check.ts)_
@@ -214,7 +214,7 @@ OPTIONS
   --config=config          Path to your Apollo config file
   --endpoint=endpoint      The URL of the server to fetch the schema from or path to ./your/local/schema.graphql
   --header=header          Additional headers to send to server for introspectionQuery
-  --key=key                The API key for the Apollo Engine service
+  --engineKey=engineKey    The API key for the Apollo Engine service
 ```
 
 _See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/schema/download.ts)_
@@ -228,13 +228,13 @@ USAGE
   $ apollo schema:publish
 
 OPTIONS
-  -h, --help           Show command help
-  --config=config      Path to your Apollo config file
-  --endpoint=endpoint  The URL of the server to fetch the schema from
-  --header=header      Additional headers to send to server for introspectionQuery
-  --json               Output successful publish result as JSON
-  --key=key            The API key for the Apollo Engine service
-  --tag=tag            The tag to publish the schema to
+  -h, --help            Show command help
+  --config=config       Path to your Apollo config file
+  --endpoint=endpoint   The URL of the server to fetch the schema from
+  --header=header       Additional headers to send to server for introspectionQuery
+  --json                Output successful publish result as JSON
+  --engineKey=engineKey The API key for the Apollo Engine service
+  --tag=tag             The tag to publish the schema to
 ```
 
 _See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/schema/publish.ts)_
