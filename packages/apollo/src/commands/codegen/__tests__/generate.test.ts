@@ -262,16 +262,10 @@ describe("successful codegen", () => {
         "package.json": `
         {
           "apollo": {
-            "schemas": {
-              "serverSchema": {
-                "schema": "schema.json"
-              },
-              "default": {
-                "schema": "clientSideSchemaTag.js",
-                "extends": "serverSchema",
-                "clientSide": true
-              }
-            }
+            "services": {
+              "generateTest": "schema.json"
+            },
+            "clientSchema": "clientSideSchemaTag.js"
           }
         }
         `

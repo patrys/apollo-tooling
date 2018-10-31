@@ -80,7 +80,6 @@ export function loadConfigStep(
         });
       }
 
-      debugger;
       const engineKey = flags.engineKey || process.env.ENGINE_API_KEY;
       if (engineKey) {
         if (Object.keys(ctx.config.schemas).length == 1) {

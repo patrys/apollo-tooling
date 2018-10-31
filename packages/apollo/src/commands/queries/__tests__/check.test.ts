@@ -12,7 +12,6 @@ import { VALIDATE_OPERATIONS } from "../../../operations/validateOperations";
 import { fs as mockFS, vol } from "apollo-codegen-core/lib/localfs";
 const test = setup.do(() => mockConsole());
 const ENGINE_API_KEY = "service:test:1234";
-const hash = "12345";
 
 const dummyOperations = [
   { document: "{ me { firstname } }" },
@@ -22,7 +21,15 @@ const dummyOperations = [
   ...rest
 }));
 
-const engineSuccess = ({ operations, tag, results } = {}) => nock => {
+const engineSuccess = ({
+  operations,
+  tag,
+  results
+}: {
+  operations?: { document: string }[];
+  tag?: string;
+  results?: { type: string; code: string; description: string }[];
+} = {}) => nock => {
   nock
     .matchHeader("x-api-key", ENGINE_API_KEY)
     .post("/", {
@@ -99,10 +106,8 @@ describe("successful checks", () => {
         "package.json": `
       {
         "apollo": {
-          "schemas": {
-            "default": {
-              "engineKey": "${ENGINE_API_KEY}"
-            }
+          "services": {
+            "queryCheckTest": "current"
           }
         }
       }
@@ -110,11 +115,12 @@ describe("successful checks", () => {
       })
     )
     .nock(ENGINE_URI, engineSuccess())
+    .env({ ENGINE_API_KEY })
     .stdout()
     .command(["queries:check"])
     .exit(1)
     .it(
-      "compares against the latest uploaded schema with engine key from default config",
+      "compares against the latest uploaded schema with engine key as an environment variable",
       () => {
         expect(stdout).toContain("FAILURE");
         expect(stdout).toContain("WARNING");
@@ -128,10 +134,8 @@ describe("successful checks", () => {
         "test-package.json": `
       {
         "apollo": {
-          "schemas": {
-            "default": {
-              "engineKey": "${ENGINE_API_KEY}"
-            }
+          "services": {
+            "queryCheckTest": "current"
           }
         }
       }
@@ -139,11 +143,12 @@ describe("successful checks", () => {
       })
     )
     .nock(ENGINE_URI, engineSuccess())
+    .env({ ENGINE_API_KEY })
     .stdout()
     .command(["queries:check", "--config=test-package.json"])
     .exit(1)
     .it(
-      "compares against the latest uploaded schema with engine key from specified config",
+      "compares against the latest uploaded schema with engine key as an environment variable",
       () => {
         expect(stdout).toContain("FAILURE");
         expect(stdout).toContain("WARNING");
@@ -156,7 +161,7 @@ describe("successful checks", () => {
     .stdout()
     .command(["queries:check", `--engineKey=${ENGINE_API_KEY}`])
     .exit(1)
-    .it("allows custom api key", () => {
+    .it("allows custom api key as a flag", () => {
       expect(stdout).toContain("FAILURE");
       expect(stdout).toContain("WARNING");
     });
@@ -197,10 +202,7 @@ describe("successful checks", () => {
   test
     .stdout()
     .do(() => vol.fromJSON(files))
-    .nock(
-      "https://engine.example.com",
-      engineSuccess({ engine: "https://engine.example.com" })
-    )
+    .nock("https://engine.example.com", engineSuccess())
     .env({ ENGINE_API_KEY })
     .command(["queries:check", "--engine=https://engine.example.com"])
     .exit(1)

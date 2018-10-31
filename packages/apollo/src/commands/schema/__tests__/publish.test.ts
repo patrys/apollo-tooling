@@ -39,7 +39,11 @@ const localSuccess = nock => {
     .reply(200, { data: fullSchema });
 };
 
-const engineSuccess = ({ schema, tag, result } = {}) => nock => {
+const engineSuccess = ({
+  schema,
+  tag,
+  result
+}: { schema?: any; tag?: string; result?: { data: any } } = {}) => nock => {
   nock
     .matchHeader("x-api-key", ENGINE_API_KEY)
     .post("/", {
@@ -120,17 +124,15 @@ describe("successful uploads", () => {
         "package.json": `
       {
         "apollo": {
-          "schemas": {
-            "customEndpoint": {
-              "endpoint": "https://staging.example.com/graphql",
-              "engineKey": "${ENGINE_API_KEY}"
-            }
+          "services": {
+            "publishTest": "https://staging.example.com/graphql"
           }
         }
       }
       `
       })
     )
+    .env({ ENGINE_API_KEY })
     .stdout()
     .nock("https://staging.example.com", localSuccess)
     .nock(ENGINE_URI, engineSuccess())

@@ -73,18 +73,16 @@ function loadEndpointConfig(
 }
 
 function loadSchemaConfig(
-  obj: any,
+  obj: SchemaDependency,
   defaultEndpoint: boolean
 ): SchemaDependency {
   return {
-    schema: obj.schema,
+    ...obj,
     endpoint: loadEndpointConfig(
       obj.endpoint,
       !obj.engineKey && defaultEndpoint
     ),
-    engineKey: process.env.ENGINE_API_KEY || obj.engineKey,
-    clientSide: obj.clientSide,
-    extends: obj.extends
+    engineKey: process.env.ENGINE_API_KEY || obj.engineKey
   };
 }
 
@@ -106,6 +104,52 @@ function loadDocumentSet(obj: any): DocumentSet {
   };
 }
 
+function getSchemasFromServices({
+  obj,
+  defaultEndpoint,
+  defaultSchema
+}: {
+  obj: any;
+  defaultEndpoint: boolean;
+  defaultSchema: boolean;
+}) {
+  const schemas: { [key: string]: SchemaDependency } = {};
+  if (obj.services) {
+    const [[serviceName, schemaRef]] = Object.entries(obj.services);
+
+    schemas[serviceName] = {
+      endpoint: isUrl(schemaRef)
+        ? loadEndpointConfig(schemaRef, true)
+        : undefined,
+      engineKey: process.env.ENGINE_API_KEY,
+      clientSide: false,
+      schema: isFile(schemaRef) ? schemaRef : null
+    };
+  }
+
+  if (Object.keys(schemas).length === 0 && defaultSchema) {
+    schemas.default = loadSchemaConfig({}, defaultEndpoint);
+  }
+
+  if (obj.clientSchema) {
+    schemas.default = {
+      schema: obj.clientSchema,
+      clientSide: true,
+      extends: schemas ? Object.keys(schemas)[0] : undefined
+    };
+  }
+
+  return schemas;
+}
+
+function isUrl(maybeUrl: string) {
+  return !!maybeUrl.match(/http/);
+}
+
+function isFile(maybeFile: string) {
+  return !isUrl(maybeFile) && fs.existsSync(maybeFile);
+}
+
 export function loadConfig(
   obj: any,
   configFile: string,
@@ -113,26 +157,23 @@ export function loadConfig(
   defaultEndpoint: boolean,
   defaultSchema: boolean
 ): ApolloConfig {
-  const schemasObj = (obj.schemas || {}) as { [name: string]: any };
-  Object.keys(schemasObj).forEach(key => {
-    schemasObj[key] = loadSchemaConfig(schemasObj[key], defaultEndpoint);
+  const schemas = getSchemasFromServices({
+    obj,
+    defaultEndpoint,
+    defaultSchema
   });
-
-  if (Object.keys(schemasObj).length == 0 && defaultSchema) {
-    schemasObj["default"] = loadSchemaConfig({}, defaultEndpoint);
-  }
 
   return {
     configFile,
     projectFolder: configDir,
-    schemas: schemasObj,
+    schemas,
     name: basename(configDir),
     queries: (obj.queries
       ? Array.isArray(obj.queries)
         ? (obj.queries as any[])
         : [obj.queries]
-      : Object.keys(schemasObj).length == 1
-        ? [{ schema: Object.keys(schemasObj)[0] }]
+      : Object.keys(schemas).length == 1
+        ? [{ schema: Object.keys(schemas)[0] }]
         : []
     ).map(d => loadDocumentSet(d)),
     engineEndpoint: obj.engineEndpoint

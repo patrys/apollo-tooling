@@ -54,10 +54,8 @@ describe("successful schema downloading", () => {
         "package.json": `
       {
         "apollo": {
-          "schemas": {
-            "localServer": {
-              "endpoint": "http://localhost:1234/graphql"
-            }
+          "services": {
+            "schemaDownloadTest": "http://localhost:1234/graphql"
           }
         }
       }
