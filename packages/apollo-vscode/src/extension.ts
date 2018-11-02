@@ -150,6 +150,13 @@ export function activate(context: ExtensionContext) {
   };
 
   client.onReady().then(() => {
+    // Inform the language server which file is open when it's initialized
+    if (window.activeTextEditor) {
+      client.sendNotification(
+        "apollographql/initialOpenFile",
+        window.activeTextEditor.document.uri
+      );
+    }
     // For some reason, non-strings can only be sent in one direction. For now, messages
     // coming from the language server just need to be stringified and parsed.
     client.onNotification(

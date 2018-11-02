@@ -380,7 +380,7 @@ ${argumentNode.description}
 
   async provideCodeLenses(
     uri: DocumentUri,
-    _token: CancellationToken
+    _token?: CancellationToken
   ): Promise<CodeLens[]> {
     const project = this.workspace.projectForFile(uri);
     if (!project) return [];

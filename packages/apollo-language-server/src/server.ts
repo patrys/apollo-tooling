@@ -30,6 +30,7 @@ const connection = createConnection(ProposedFeatures.all);
 let hasWorkspaceFolderCapability = false;
 
 const workspace = new GraphQLWorkspace(new LoadingHandler(connection));
+const languageProvider = new GraphQLLanguageProvider(workspace);
 
 workspace.onSchemaTags((tags: Map<string, string[]>) => {
   connection.sendNotification(
@@ -102,6 +103,12 @@ const documents: TextDocuments = new TextDocuments();
 // for open, change and close text document events
 documents.listen(connection);
 
+// Code lenses aren't triggered until a document "event" happens.
+// This handles the edge case where the extension loads with a file already open.
+connection.onNotification("apollographql/initialOpenFile", uri => {
+  languageProvider.provideCodeLenses(uri);
+});
+
 documents.onDidChangeContent(params => {
   const project = workspace.projectForFile(params.document.uri);
   if (!project) return;
@@ -158,8 +165,6 @@ connection.onDidChangeWatchedFiles(params => {
     }
   }
 });
-
-const languageProvider = new GraphQLLanguageProvider(workspace);
 
 connection.onHover((params, token) =>
   languageProvider.provideHover(params.textDocument.uri, params.position, token)
